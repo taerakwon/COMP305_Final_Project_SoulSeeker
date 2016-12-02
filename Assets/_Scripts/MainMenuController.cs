@@ -2,10 +2,11 @@
  * File: MainMenuController.cs
  * Students: Taera Kwon (300755802), Ali Saim (300759480)
  * Date Created: 2016-11-23
- * Date Last Modified: 2016-11-23
+ * Date Last Modified: 2016-12-02
  * Last Modified By: Taera Kwon
  * Description: Main Menu class for Soul Seeker
  * Revision History:
+ * 	Dec 02, 2016:	Added Exit Method
  *  Nov 23, 2016:
  * 					Added Background Music and methods for Play and Instruction buttons.
  * 					Created
@@ -39,6 +40,11 @@ public class MainMenuController : MonoBehaviour{
 	public void Instruction()
 	{
 		SceneManager.LoadScene ("Instruction");
+	}
+	// Method to quit the game
+	public void Exit()
+	{
+		Application.Quit ();
 	}
 
 }
