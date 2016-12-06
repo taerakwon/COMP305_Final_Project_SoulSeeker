@@ -1,11 +1,15 @@
-﻿/* Game Title: Soul Seeker
+﻿/*Game Title: Soul Seeker
  * File: GameController.cs
  * Students: Taera Kwon (300755802), Ali Saim (300759480)
  * Date Created: 2016-11-22
- * Date Last Modified: 2016-11-23
- * Last Modified By: Taera Kwon
+ * Date Last Modified: 2016-12-05
+ * Last Modified By: Ali Saim
  * Description: Game controller class for Soul Seeker
  * Revision History:
+ * 
+ *  Dec 5, 2016		Added Accessor for Timer Value
+ * 					Added FixedUpdate method to class
+ * 					Added Timer Label to Game Header
  *  Nov 23, 2016:
  * 					Added panel to increase visibility when game finishes
  * 					Added end condition
@@ -43,6 +47,7 @@ public class GameController : MonoBehaviour {
 	public Text TotalSoulsCollected;
 	public Text GameOverLabel;
 	public Text WonLabel;
+	public Text TimerLabel;
 
 	[Header("UI Buttons")]
 	public Button ReplayButton;
@@ -59,6 +64,8 @@ public class GameController : MonoBehaviour {
 	private int _soulsCollected;
 	private float _spawnCounter;
 	private bool _bRespawnGhosts;
+	private float _timerValue;
+	private int _iTimerValue;
 
 	// Use this for initialization
 	void Start () 
@@ -79,11 +86,23 @@ public class GameController : MonoBehaviour {
 		// Set Text
 		this.LivesLabel.text = "TOTAL LIVES: " + this._playerLives;
 		this.SoulsCollectedLabel.text = "SOULS COLLECTED: " + this._soulsCollected;
+		this.TimerLabel.text = "Time: " + this._iTimerValue;
 
 		// When you win the game
 		if (this._soulsCollected == 80) {
 			this._endGame ();
 		}
+	}
+
+	void FixedUpdate()
+	{
+		this._timerValue += Time.deltaTime;
+		if (this._timerValue >= 1f) {
+			this._iTimerValue -= 1;
+			this._timerValue = 0f;
+		}
+
+
 	}
 
 	// ACCESSORS
@@ -101,6 +120,18 @@ public class GameController : MonoBehaviour {
 			{
 				this._endGame ();
 			}
+		}
+	}
+
+	public float TimerValue
+	{
+		get
+		{
+			return this._timerValue;
+		}
+		set
+		{
+			this._timerValue = value;
 		}
 	}
 
@@ -184,11 +215,15 @@ public class GameController : MonoBehaviour {
 		// Show Labels
 		this.SoulsCollectedLabel.gameObject.SetActive(true);
 		this.LivesLabel.gameObject.SetActive (true);
+		this.TimerLabel.gameObject.SetActive (true);
 
 		// Initialise Values
 		this._playerLives = 3;
 		this._soulsCollected = 0;
 		this._spawnCounter = 0f;
+
+		this._timerValue = 0f;
+		this._iTimerValue = 100;
 
 		// Spawn Player
 		this.Spawn (Player);
@@ -245,6 +280,7 @@ public class GameController : MonoBehaviour {
 		this.LivesLabel.gameObject.SetActive(false);
 		this.SoulsCollectedLabel.gameObject.SetActive (false);
 		this.CrossImage.gameObject.SetActive(false);
+		this.TimerLabel.gameObject.SetActive (false);
 
 		// Activate
 		this.Panel.gameObject.SetActive (true);
