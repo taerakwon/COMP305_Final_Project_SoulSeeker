@@ -6,9 +6,11 @@
  * Last Modified By: Ali Saim
  * Description: Game controller class for Soul Seeker
  * Revision History:
- * 	Dec 9, 2016 	Removed timer from Main level, added Total souls remaining lable
- * 					Added methods to retrieve scene name and apply settings based on teheme
- *  Dec 5, 2016		Added Accessor for Timer Value
+ * 	Dec 9, 2016: 	
+ * 					Initalized level 3 ghost location and player location
+ * 					Removed timer from Main level, added Total souls remaining lable
+ * 					Added methods to retrieve scene name and apply settings based on scene
+ *  Dec 5, 2016:	Added Accessor for Timer Value
  * 					Added FixedUpdate method to class
  * 					Added Timer Label to Game Header
  *  Nov 23, 2016:
@@ -249,6 +251,9 @@ public class GameController : MonoBehaviour {
 		} else if (_sceneName == "Level2") {
 			this.TimerLabel.gameObject.SetActive (true);
 			_totalSouls = 85;
+		} else if (_sceneName == "Level3") {
+			this.TimerLabel.gameObject.SetActive (true);
+			_totalSouls = 100;
 		}
 
 	}
@@ -302,6 +307,22 @@ public class GameController : MonoBehaviour {
 			}
 			if (SpawnObject == Player) {
 				Player.transform.position = new Vector3 (1.25f, 3f, -7f);
+			}
+		} else if (this._sceneName == "Level3") { //If level 3
+			if (SpawnObject == RedGhost) {
+				RedGhost.transform.position = new Vector3 (40f, 25f, 12f);
+			}
+			if (SpawnObject == BlueGhost) {
+				BlueGhost.transform.position = new Vector3 (45f, 25f, 12f);
+			}
+			if (SpawnObject == OrangeGhost) {
+				OrangeGhost.transform.position = new Vector3 (35f, 25f, 12f);
+			}
+			if (SpawnObject == PinkGhost) {
+				PinkGhost.transform.position = new Vector3 (40f, 25f, 10f);
+			}
+			if (SpawnObject == Player) {
+				Player.transform.position = new Vector3 (0f,100f, 0f);
 			}
 		}
 	}
