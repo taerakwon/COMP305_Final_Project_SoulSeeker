@@ -2,11 +2,12 @@
  * File: GameController.cs
  * Students: Taera Kwon (300755802), Ali Saim (300759480)
  * Date Created: 2016-11-22
- * Date Last Modified: 2016-12-05
+ * Date Last Modified: 2016-12-09
  * Last Modified By: Ali Saim
  * Description: Game controller class for Soul Seeker
  * Revision History:
- * 
+ * 	Dec 9, 2016 	Removed timer from Main level, added Total souls remaining lable
+ * 					Added methods to retrieve scene name and apply settings based on teheme
  *  Dec 5, 2016		Added Accessor for Timer Value
  * 					Added FixedUpdate method to class
  * 					Added Timer Label to Game Header
@@ -45,6 +46,7 @@ public class GameController : MonoBehaviour {
 	public Text LivesLabel;
 	public Text SoulsCollectedLabel;
 	public Text TotalSoulsCollected;
+	public Text TotalSoulsRemaining;
 	public Text GameOverLabel;
 	public Text WonLabel;
 	public Text TimerLabel;
@@ -59,6 +61,8 @@ public class GameController : MonoBehaviour {
 	[Header("Game Sounds")]
 	public AudioSource GameStartSound;
 
+	public static int Level;
+
 	// PRIVATE INSTANCE VARIABLES
 	private int _playerLives;
 	private int _soulsCollected;
@@ -66,10 +70,16 @@ public class GameController : MonoBehaviour {
 	private bool _bRespawnGhosts;
 	private float _timerValue;
 	private int _iTimerValue;
+	private int _level;
+	private Scene _scene;
+	private string _sceneName;
+	private int _totalSouls;
 
 	// Use this for initialization
 	void Start () 
 	{
+		this._scene = SceneManager.GetActiveScene (); // Gets current scene
+		_sceneName = this._scene.name; // Sets name of the scene
 		this._initialise ();
 	}
 
@@ -87,9 +97,10 @@ public class GameController : MonoBehaviour {
 		this.LivesLabel.text = "TOTAL LIVES: " + this._playerLives;
 		this.SoulsCollectedLabel.text = "SOULS COLLECTED: " + this._soulsCollected;
 		this.TimerLabel.text = "Time: " + this._iTimerValue;
+		this.TotalSoulsRemaining.text = "TOTAL SOULS REMAINING: " + (this._totalSouls - this._soulsCollected).ToString();
 
 		// When you win the game
-		if (this._soulsCollected == 80) {
+		if (this._totalSouls == this._soulsCollected) {
 			this._endGame ();
 		}
 	}
@@ -215,7 +226,8 @@ public class GameController : MonoBehaviour {
 		// Show Labels
 		this.SoulsCollectedLabel.gameObject.SetActive(true);
 		this.LivesLabel.gameObject.SetActive (true);
-		this.TimerLabel.gameObject.SetActive (true);
+		this.TotalSoulsRemaining.gameObject.SetActive (true);
+
 
 		// Initialise Values
 		this._playerLives = 3;
@@ -229,6 +241,16 @@ public class GameController : MonoBehaviour {
 		this.Spawn (Player);
 		this._bRespawnGhosts = true;
 		this.GameStartSound.Play();
+
+		// DEPENDS ON SCENE
+		if (_sceneName == "Main") {
+			this.TimerLabel.gameObject.SetActive (false);
+			_totalSouls = 80;
+		} else if (_sceneName == "Level2") {
+			this.TimerLabel.gameObject.SetActive (true);
+			_totalSouls = 85;
+		}
+
 	}
 
 	// Respawns All Ghosts
@@ -248,20 +270,39 @@ public class GameController : MonoBehaviour {
 	// SPAWN SELECTED OBJECT
 	public void Spawn(GameObject SpawnObject)
 	{
-		if (SpawnObject == RedGhost) {
-			RedGhost.transform.position = new Vector3 (-1.75f, 0f, 1.2f);
-		}
-		if (SpawnObject == BlueGhost) {
-			BlueGhost.transform.position = new Vector3 (1.75f, 0f, 1.2f);
-		}
-		if (SpawnObject == OrangeGhost) {
-			OrangeGhost.transform.position = new Vector3 (3.5f, 0f, 1.2f);
-		}
-		if (SpawnObject == PinkGhost) {
-			PinkGhost.transform.position = new Vector3 (-3.5f, 0f, 1.2f);
-		}
-		if (SpawnObject == Player) {
-			Player.transform.position = new Vector3 (0f, 0.5f, -3.5f);
+		// If Main (Level 1)
+		if (this._sceneName == "Main") {
+			if (SpawnObject == RedGhost) {
+				RedGhost.transform.position = new Vector3 (-1.75f, 0f, 1.2f);
+			}
+			if (SpawnObject == BlueGhost) {
+				BlueGhost.transform.position = new Vector3 (1.75f, 0f, 1.2f);
+			}
+			if (SpawnObject == OrangeGhost) {
+				OrangeGhost.transform.position = new Vector3 (3.5f, 0f, 1.2f);
+			}
+			if (SpawnObject == PinkGhost) {
+				PinkGhost.transform.position = new Vector3 (-3.5f, 0f, 1.2f);
+			}
+			if (SpawnObject == Player) {
+				Player.transform.position = new Vector3 (0f, 0.5f, -3.5f);
+			}
+		} else if (this._sceneName == "Level2") { // If Level 2
+			if (SpawnObject == RedGhost) {
+				RedGhost.transform.position = new Vector3 (0f, 0f, 0f);
+			}
+			if (SpawnObject == BlueGhost) {
+				BlueGhost.transform.position = new Vector3 (3f, 0f, 0f);
+			}
+			if (SpawnObject == OrangeGhost) {
+				OrangeGhost.transform.position = new Vector3 (4.5f, 0f, 0f);
+			}
+			if (SpawnObject == PinkGhost) {
+				PinkGhost.transform.position = new Vector3 (-1.5f, 0f, 1.2f);
+			}
+			if (SpawnObject == Player) {
+				Player.transform.position = new Vector3 (1.25f, 3f, -7f);
+			}
 		}
 	}
 
@@ -281,6 +322,7 @@ public class GameController : MonoBehaviour {
 		this.SoulsCollectedLabel.gameObject.SetActive (false);
 		this.CrossImage.gameObject.SetActive(false);
 		this.TimerLabel.gameObject.SetActive (false);
+		this.TotalSoulsRemaining.gameObject.SetActive (false);
 
 		// Activate
 		this.Panel.gameObject.SetActive (true);
@@ -290,8 +332,8 @@ public class GameController : MonoBehaviour {
 		this.ReplayButton.gameObject.SetActive (true);
 		this.MainMenuButton.gameObject.SetActive (true);
 
-		// When you win
-		if (this._soulsCollected == 80) {
+		// When you win, check condition
+		if (this._totalSouls == this._soulsCollected) {
 			this.WonLabel.gameObject.SetActive (true);
 		} else {
 			this.GameOverLabel.gameObject.SetActive (true);
