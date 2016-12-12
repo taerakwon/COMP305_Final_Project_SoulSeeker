@@ -6,6 +6,12 @@
  * Last Modified By: Ali Saim
  * Description: Game controller class for Soul Seeker
  * Revision History:
+ * 
+ * Dec 13, 2016		Add 4 portals to transport player to centre plateform
+ * 					Added Scene Manager for Conditions
+ * 
+ * Dec 12, 2016 	Added condition when timers goes to zero seconds, game is ended.
+ * 
  * 	Dec 9, 2016: 	
  * 					Initalized level 3 ghost location and player location
  * 					Removed timer from Main level, added Total souls remaining lable
@@ -105,15 +111,24 @@ public class GameController : MonoBehaviour {
 		if (this._totalSouls == this._soulsCollected) {
 			this._endGame ();
 		}
+			
 	}
 
 	void FixedUpdate()
 	{
 		this._timerValue += Time.deltaTime;
-		if (this._timerValue >= 1f) {
+		if (this._timerValue >= 1f) 
+		{
 			this._iTimerValue -= 1;
 			this._timerValue = 0f;
 		}
+
+		//if timer goes to 0, 
+		if (this._iTimerValue == 0f)
+		{
+			this._endGame ();
+		}
+
 
 
 	}
@@ -237,7 +252,7 @@ public class GameController : MonoBehaviour {
 		this._spawnCounter = 0f;
 
 		this._timerValue = 0f;
-		this._iTimerValue = 100;
+		this._iTimerValue = 180;
 
 		// Spawn Player
 		this.Spawn (Player);
@@ -251,9 +266,10 @@ public class GameController : MonoBehaviour {
 		} else if (_sceneName == "Level2") {
 			this.TimerLabel.gameObject.SetActive (true);
 			_totalSouls = 85;
+			this._iTimerValue = 70;
 		} else if (_sceneName == "Level3") {
 			this.TimerLabel.gameObject.SetActive (true);
-			_totalSouls = 100;
+			_totalSouls = 40;
 		}
 
 	}
@@ -310,19 +326,19 @@ public class GameController : MonoBehaviour {
 			}
 		} else if (this._sceneName == "Level3") { //If level 3
 			if (SpawnObject == RedGhost) {
-				RedGhost.transform.position = new Vector3 (40f, 25f, 12f);
+				RedGhost.transform.position = new Vector3 (40f, 1f, 12f);
 			}
 			if (SpawnObject == BlueGhost) {
-				BlueGhost.transform.position = new Vector3 (45f, 25f, 12f);
+				BlueGhost.transform.position = new Vector3 (45f, 1f, 12f);
 			}
 			if (SpawnObject == OrangeGhost) {
-				OrangeGhost.transform.position = new Vector3 (35f, 25f, 12f);
+				OrangeGhost.transform.position = new Vector3 (35f, 1f, 12f);
 			}
 			if (SpawnObject == PinkGhost) {
-				PinkGhost.transform.position = new Vector3 (40f, 25f, 10f);
+				PinkGhost.transform.position = new Vector3 (40f, 1f, 10f);
 			}
 			if (SpawnObject == Player) {
-				Player.transform.position = new Vector3 (0f,100f, 0f);
+				Player.transform.position = new Vector3 (0f,9f, 0f);
 			}
 		}
 	}
@@ -345,6 +361,20 @@ public class GameController : MonoBehaviour {
 		this.TimerLabel.gameObject.SetActive (false);
 		this.TotalSoulsRemaining.gameObject.SetActive (false);
 
+		// When you win, check condition
+		if (this._totalSouls == this._soulsCollected) {
+			if (_sceneName == "Level3") {
+				this.WonLabel.gameObject.SetActive (true);
+			} else if (_sceneName == "Main") {
+				SceneManager.LoadScene ("Level2");
+				return;
+			} else if (_sceneName == "Level2") {
+				SceneManager.LoadScene ("Level3");
+				return;
+			}
+		} else { // Lost Condition
+			this.GameOverLabel.gameObject.SetActive (true);
+		}
 		// Activate
 		this.Panel.gameObject.SetActive (true);
 		this.TotalSoulsCollected.text = "Total Souls Collected: " + this._soulsCollected;
@@ -352,14 +382,5 @@ public class GameController : MonoBehaviour {
 		this.TotalSoulsCollected.gameObject.SetActive (true);
 		this.ReplayButton.gameObject.SetActive (true);
 		this.MainMenuButton.gameObject.SetActive (true);
-
-		// When you win, check condition
-		if (this._totalSouls == this._soulsCollected) {
-			this.WonLabel.gameObject.SetActive (true);
-		} else {
-			this.GameOverLabel.gameObject.SetActive (true);
-		}
 	}
-
-
 }
