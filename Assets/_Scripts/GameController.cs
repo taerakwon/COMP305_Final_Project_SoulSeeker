@@ -250,9 +250,8 @@ public class GameController : MonoBehaviour {
 		this._playerLives = 3;
 		this._soulsCollected = 0;
 		this._spawnCounter = 0f;
-
 		this._timerValue = 0f;
-		this._iTimerValue = 180;
+
 
 		// Spawn Player
 		this.Spawn (Player);
@@ -266,10 +265,11 @@ public class GameController : MonoBehaviour {
 		} else if (_sceneName == "Level2") {
 			this.TimerLabel.gameObject.SetActive (true);
 			_totalSouls = 85;
-			this._iTimerValue = 70;
+			this._iTimerValue = 120;
 		} else if (_sceneName == "Level3") {
 			this.TimerLabel.gameObject.SetActive (true);
 			_totalSouls = 40;
+			this._iTimerValue = 180;
 		}
 
 	}
