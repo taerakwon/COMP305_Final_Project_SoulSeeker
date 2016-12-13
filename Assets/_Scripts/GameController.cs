@@ -124,7 +124,7 @@ public class GameController : MonoBehaviour {
 		}
 
 		//if timer goes to 0, 
-		if (this._iTimerValue == 0f)
+		if (this._iTimerValue == 0f && _sceneName != "Main")
 		{
 			this._endGame ();
 		}
