@@ -6,6 +6,7 @@
  * Last Modified By: Ali Saim
  * Description: Game controller class for Soul Seeker
  * Revision History:
+ * Dec 16, 2016		Added cheat code.  If user presses "l", "v", and "n" in sequence, game will jump to the next stage
  * 
  * Dec 13, 2016		Add 4 portals to transport player to centre plateform
  * 					Added Scene Manager for Conditions
@@ -82,6 +83,10 @@ public class GameController : MonoBehaviour {
 	private Scene _scene;
 	private string _sceneName;
 	private int _totalSouls;
+	// Cheat code array
+	private string[] _cheatCode;
+	private int _cheatCodeIndex;
+	private bool _cheatEnabled;
 
 	// Use this for initialization
 	void Start () 
@@ -92,7 +97,7 @@ public class GameController : MonoBehaviour {
 	}
 
 	// Update is called once per frame
-	void Update () 
+	void Update ()
 	{		
 		if (this._bRespawnGhosts == true) {
 			this._spawnCounter += Time.deltaTime;
@@ -105,13 +110,30 @@ public class GameController : MonoBehaviour {
 		this.LivesLabel.text = "TOTAL LIVES: " + this._playerLives;
 		this.SoulsCollectedLabel.text = "SOULS COLLECTED: " + this._soulsCollected;
 		this.TimerLabel.text = "Time: " + this._iTimerValue;
-		this.TotalSoulsRemaining.text = "TOTAL SOULS REMAINING: " + (this._totalSouls - this._soulsCollected).ToString();
+		this.TotalSoulsRemaining.text = "TOTAL SOULS REMAINING: " + (this._totalSouls - this._soulsCollected).ToString ();
 
 		// When you win the game
 		if (this._totalSouls == this._soulsCollected) {
 			this._endGame ();
 		}
-			
+
+		// Check for cheat code
+		if (Input.anyKeyDown) {
+			// Initial index = 0
+			// If KeyDown is of _cheatCode
+			if (Input.GetKeyDown (this._cheatCode [this._cheatCodeIndex])) {
+				this._cheatCodeIndex++;
+			} else { // If cheat code not entered in order
+				this._cheatCodeIndex = 0;
+			}
+		}
+
+		// If Cheat code index == size of Cheat code array then go to next level
+		if (this._cheatCodeIndex == this._cheatCode.Length) {
+			this._cheatEnabled = true;	
+			this._endGame ();
+			this._cheatCodeIndex = 0;
+		}
 	}
 
 	void FixedUpdate()
@@ -128,9 +150,6 @@ public class GameController : MonoBehaviour {
 		{
 			this._endGame ();
 		}
-
-
-
 	}
 
 	// ACCESSORS
@@ -228,6 +247,11 @@ public class GameController : MonoBehaviour {
 	// INITIALISE
 	private void _initialise()
 	{
+		// Cheat code
+		this._cheatCodeIndex = 0;
+		this._cheatCode = new string[] {"l", "v", "n"};
+		this._cheatEnabled = false;
+
 		// Hides Cursor
 		Cursor.visible = false;
 		// Hides Ghosts
@@ -362,7 +386,7 @@ public class GameController : MonoBehaviour {
 		this.TotalSoulsRemaining.gameObject.SetActive (false);
 
 		// When you win, check condition
-		if (this._totalSouls == this._soulsCollected) {
+		if (this._totalSouls == this._soulsCollected || this._cheatEnabled == true) {
 			if (_sceneName == "Level3") {
 				this.WonLabel.gameObject.SetActive (true);
 			} else if (_sceneName == "Main") {
